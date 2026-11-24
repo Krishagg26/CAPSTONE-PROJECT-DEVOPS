@@ -1,0 +1,20 @@
+name: Capstone End-to-End DevOps CI/CD Pipeline
+on:
+  push:
+    branches: [ main ]
+jobs:
+  test-and-security-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pytest && pytest -v
+      - run: python3 security/secret_guard.py
+  container-build-verify:
+    needs: [test-and-security-gate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t krmu-pulse-capstone:v1 ./app

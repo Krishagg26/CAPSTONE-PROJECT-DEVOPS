@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krmu-pulse-capstone
+  labels:
+    app: krmu-pulse
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: krmu-pulse
+  template:
+    metadata:
+      labels:
+        app: krmu-pulse
+    spec:
+      containers:
+      - name: krmu-pulse
+        image: krmu-pulse-capstone:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_VERSION
+          value: "v1.0"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 10
